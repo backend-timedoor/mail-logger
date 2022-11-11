@@ -2,7 +2,7 @@
 
 ---
 
-A laravel package to log outgoing email and resend. This package will store all outgoing emails inside database and will track their status if they are successfully sent or not.
+A laravel package to log outgoing emails and resend. This package will store all outgoing emails inside database and will track their status if they are successfully sent or not.
 
 ### Installation
 
@@ -80,26 +80,6 @@ Since this command will only resend the mails which are failed to send, You can 
 $schedule->command('mail-logger:resend-unsent-mail')->daily();
 ```
 
-If you want to resend via controller, please look at the example below
-
-```php
-<?php
-
-use Timedoor\MailLogger\Logger\MailLogger;
-use Timedoor\MailLogger\Models\MailLog;
-
-class MailController extends Controller
-{
-    public function resend(MailLog $email)
-    {
-        MailLogger::resendMailById($email->id, true); //true for --now option
-        MailLogger::resendUnsentMails(true)  //true for --now option
-
-        return redirect()->back();
-    }
-}
-```
-
 #### Deleting Older Entries
 
 Since this package records all outgoing emails, Your database table will start growing quickly. To automatically delete older entires,
@@ -112,6 +92,41 @@ $schedule->command('mail-logger:prune --hours=72')->daily();
 ```
 
 This will delete all entries which are older than 72 hours.
+
+#### Run it via controller
+
+If you want to resend or prune emails via controller, please look at the example below
+
+```php
+<?php
+
+use Timedoor\MailLogger\Logger\MailLogger;
+use Timedoor\MailLogger\Models\MailLog;
+
+class MailController extends Controller
+{
+    public function resend(MailLog $email)
+    {
+        MailLogger::resendMailById($email->id, true); //true for --now option
+
+        return redirect()->back();
+    }
+    
+    public function resendAll(MailLog $email)
+    {
+        MailLogger::resendUnsentMails(true); //true for --now option
+
+        return redirect()->back();
+    }
+    
+    public function prune($x)
+    {
+        MailLogger::pruneMails(now()->subHours($x)); // prune emails older than $x hours
+
+        return redirect()->back();
+    }
+}
+```
 
 ### Contributing
 
