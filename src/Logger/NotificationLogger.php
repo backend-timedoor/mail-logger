@@ -40,7 +40,7 @@ class NotificationLogger implements MailLoggerContract
                 'subject'  => $newNotif->subject,
                 'mailable_name' => get_class($event->notification),
                 'mailable' => serialize(clone $event->notification),
-                'body' => view($newNotif->view, $newNotif->viewData)->render(),
+                'body' => $newNotif instanceof \Illuminate\Notifications\Messages\MailMessage ? $newNotif->render() : view($newNotif->view, $newNotif->viewData)->render(),
                 'is_queued' => in_array(ShouldQueue::class, class_implements($event->notification)),
                 'is_notification' => true,
                 'notifiable' => serialize(clone $event->notifiable),
