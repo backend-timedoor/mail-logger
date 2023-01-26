@@ -77,12 +77,18 @@ class MailLoggerServiceProvider extends ServiceProvider
                 if (!is_array($data)) $data = [];
             }
 
+            if (method_exists($mailable, 'getHtmlBody')) {
+                $body = $mailable->getHtmlBody();
+            } else {
+                $body = $mailable instanceof \Illuminate\Notifications\Messages\MailMessage ? $mailable->render() : view($mailable->view, $mailable->viewData)->render();
+            }
+
             return array_merge($data, [
                 '__mail_log_uuid' => Str::uuid(),
                 '__mail_log_mailable_name' => get_class($mailable),
                 '__mail_log_subject' => $mailable->subject,
                 '__mail_log_recipients' => collect($mailable->to)->pluck('address')->toArray(),
-                '__mail_log_body' => $mailable->getHtmlBody(),
+                '__mail_log_body' => $body,
                 '__mail_log_mailable' => serialize(clone $mailable),
                 '__mail_log_queued' => in_array(ShouldQueue::class, class_implements($mailable)),
             ]);
