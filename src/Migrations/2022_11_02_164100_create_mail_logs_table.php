@@ -19,11 +19,11 @@ class CreateMailLogsTable extends Migration
             $table->string('mailable_name')->nullable();
             $table->string('subject')->nullable();
             $table->text('recipients')->nullable();
-            $table->text('body')->nullable();
+            $table->longText('body')->nullable();
             $table->text('mailable');
             $table->boolean('is_queued');
             $table->boolean('is_notification')->default(false);
-            $table->text('notifiable')->nullable();
+            $table->longText('notifiable')->nullable();
             $table->boolean('is_sent')->default(false);
             $table->unsignedInteger('tries')->default(0);
             $table->timestamps();
