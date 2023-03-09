@@ -13,7 +13,13 @@ class MailLogger
      */
     public static function handleMailSendingEvent(MailLoggerContract $mail_logger, $event)
     {
-        if (!is_array(config('mail_logger.ignore')) || !in_array(get_class($event), config('mail_logger.ignore'))) {
+        if ($mail_logger instanceof NotificationLogger) {
+            $mailClass = get_class($event->notification);
+        } else {
+            $mailClass = isset($event->data['__mail_log_mailable_name']) ? $event->data['__mail_log_mailable_name'] : null;
+        }
+
+        if (!is_array(config('mail_logger.ignore')) || !in_array($mailClass, config('mail_logger.ignore'))) {
             $mail_logger->handleMailSendingEvent($event);
         }
     }
@@ -24,7 +30,13 @@ class MailLogger
      */
     public static function handleMailSentEvent(MailLoggerContract $mail_logger, $event)
     {
-        if (!is_array(config('mail_logger.ignore')) || !in_array(get_class($event), config('mail_logger.ignore'))) {
+        if ($mail_logger instanceof NotificationLogger) {
+            $mailClass = get_class($event->notification);
+        } else {
+            $mailClass = isset($event->data['__mail_log_mailable_name']) ? $event->data['__mail_log_mailable_name'] : null;
+        }
+
+        if (!is_array(config('mail_logger.ignore')) || !in_array($mailClass, config('mail_logger.ignore'))) {
             $mail_logger->handleMailSentEvent($event);
         }
     }
